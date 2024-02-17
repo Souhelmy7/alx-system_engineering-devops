@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Bash script that configures a server 
+sudo sed -i '1 i\ \tserver { listen 80; }' /etc/nginx/sites-available/default
+sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+sudo service nginx restart
