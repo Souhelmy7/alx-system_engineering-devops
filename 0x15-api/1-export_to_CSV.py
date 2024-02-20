@@ -1,22 +1,26 @@
 #!/usr/bin/python3
-# Using what you did in the task #0, extend
-# your Python script to export data in the CSV format.
+"""this module  to export data in the CSV format"""
 
+import csv
 import requests
 import sys
 
 
 if __name__ == "__main__":
-    USER_ID = sys.argv[1]
-    jsonplaceholder = 'https://jsonplaceholder.typicode.com/users'
-    url = jsonplaceholder + '/' + USER_ID
-    response = requests.get(url)
-    username = response.json().get('username')
-    todo_url = url + '/todos'
-    response = requests.get(todo_url)
-    tasks = response.json()
-    with open(USER_ID + '.csv', 'w') as f:
-        for task in tasks:
-            f.write('"{}","{}","{}","{}"\n'.format(USER_ID, username,
-                                                task.get('completed'),
-                                                task.get('title')))
+    base_url = "https://jsonplaceholder.typicode.com/users"
+    user_id = int(sys.argv[1])
+    url = f"{base_url}/{user_id}"
+    user_data = requests.get(url).json()
+    user_name = user_data["username"]
+    todos = requests.get('https://jsonplaceholder.typicode.com/todos').json()
+    file_name = "{}.csv".format(user_id)
+    data = []
+    for task in todos:
+        if task.get("userId") == int(user_id):
+            user_info = [user_id, user_name,
+                         str(task.get("completed")), task.get("title")]
+            data.append(user_info)
+    with open(file_name, "w", newline='') as f:
+        writer = csv.writer(f, delimiter=',', quotechar='"',
+                            quoting=csv.QUOTE_ALL, lineterminator='\n')
+        writer.writerows(data)
